@@ -1,6 +1,6 @@
 define(['sinon', 'State'], function(sinon, State) {
+  'use strict';
   describe('State > ', function() {
-    'use strict';
     it('should register itself via the runtime\'s method', function() {
       var runtime = {
         'request': function(category, method, detail) {
