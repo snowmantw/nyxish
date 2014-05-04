@@ -1,0 +1,35 @@
+{
+  "name": "nyxish",
+  "version": "0.0.0",
+  "description": "Experimental eDSL on JavaScript to put state-transferring as the primary element",
+  "main": "index.js",
+  "dependencies": {
+    "karma": "~0.12.14",
+    "karma-chrome-launcher": "~0.1.3",
+    "karma-jasmine": "~0.1.5"
+  },
+  "devDependencies": {
+    "karma-chrome-launcher": "^0.1.3",
+    "karma-jasmine": "^0.1.5",
+    "karma": "^0.12.14",
+    "requirejs": "^2.1.11",
+    "karma-requirejs": "^0.2.1",
+    "karma-firefox-launcher": "^0.1.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/snowmantw/nyxish.git"
+  },
+  "keywords": [
+    "eDSL"
+  ],
+  "author": "Greg Weng",
+  "license": "GPL",
+  "bugs": {
+    "url": "https://github.com/snowmantw/nyxish/issues"
+  },
+  "homepage": "https://github.com/snowmantw/nyxish"
+}

@@ -92,6 +92,10 @@ state('refresh-login', function(monitors) {
   // * when create the monitor.
   var {mon, oldVal, newVal, changes} = monitors('responseText');
 
+
+  // No permanent state changing function should be pure functions,
+  // not passing and handing by states.
+
   // clear recorded changes; if any.
   // but the accumlating would continue.
   mon.clear();
