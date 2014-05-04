@@ -23,7 +23,21 @@ define(['sinon', 'Transfer'], function(sinon, Transfer) {
     });
 
     it('should call generator when runtime has no such state', function() {
-      
+      var stateExecute = sinon.stub().returns(),
+          runtime = {
+            'has': sinon.stub().returns(false)
+          },
+          generator = sinon.stub().returns(
+            { 'execute': stateExecute }
+          ),
+          pred = sinon.stub().returns(true),
+          transfer = new Transfer(runtime, {'__context_id__': 'bar'},
+            generator, pred);
+
+      generator.__state_name__ = 'notfoo';
+      transfer.execute();
+      expect(generator.called).toBe(true);
+      expect(stateExecute.called).toBe(true);
     });
   });
 });
