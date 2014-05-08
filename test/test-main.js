@@ -21,7 +21,8 @@ require.config({
   deps: allTestFiles,
 
   paths: {
-    'sinon': '../external/sinon'
+    'sinon': '../external/test/sinon',
+    'Squire': '../external/test/Squire'
   },
 
   shim: {
