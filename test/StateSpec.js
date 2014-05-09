@@ -4,9 +4,9 @@ define(['sinon', 'State'], function(sinon, State) {
     it('should register itself via the runtime\'s method', function() {
       var runtime = {
         'request': function(category, method, detail) {
-          expect(category).toBe('state');
-          expect(method).toBe('register');
-          expect(detail.name).toBe('foo');
+          expect(category).to.equal('state');
+          expect(method).to.equal('register');
+          expect(detail.name).to.equal('foo');
         }
       },
       content = sinon.stub(),
@@ -17,13 +17,13 @@ define(['sinon', 'State'], function(sinon, State) {
       var runtime = {
         'request': sinon.stub(),
         'notify': function(category, method, detail) {
-          expect(category).toBe('state');
-          expect(method).toBe('done');
-          expect(detail.name).toBe('foo');
+          expect(category).to.equal('state');
+          expect(method).to.equal('done');
+          expect(detail.name).to.equal('foo');
         }
       },
       content = function() {
-        expect(this.foo).toBe(2);
+        expect(this.foo).to.equal(2);
       },
       context = {
         'foo': 2

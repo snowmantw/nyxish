@@ -11,9 +11,9 @@ define(['sinon', 'Monitor'], function(sinon, Monitor) {
       // Assume we're in the new state now.
       context.foo = 3;
       var {past, current, changes} = monitor.execute(context);
-      expect(past).toBe(2);
-      expect(current).toBe(3);
-      expect(changes.length).toBe(0);
+      expect(past).to.equal(2);
+      expect(current).to.equal(3);
+      expect(changes.length).to.equal(0);
     });
 
     it('should serialized when the config flag is set', function() {
@@ -27,7 +27,7 @@ define(['sinon', 'Monitor'], function(sinon, Monitor) {
       // Assume we're in the new state now.
       context.foo = 3;
       var {past, current, changes} = monitor.execute(context);
-      expect(past).toBe(comparingTarget);
+      expect(past).to.equal(comparingTarget);
     });
   });
 });

@@ -31,7 +31,7 @@ define(['sinon', 'Squire'], function(sinon, Squire) {
           method = transferInterfaces.defer();
 
       method();
-      expect(method.called).toBe(true);
+      expect(method.called).to.equal(true);
     }));
   });
 });

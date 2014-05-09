@@ -19,7 +19,7 @@ define(['sinon', 'Transfer'], function(sinon, Transfer) {
 
       generator.__state_name__ = 'foo';
       transfer.execute();
-      expect(stateExecute.called).toBe(true);
+      expect(stateExecute.called).to.equal(true);
     });
 
     it('should call generator when runtime has no such state', function() {
@@ -36,8 +36,8 @@ define(['sinon', 'Transfer'], function(sinon, Transfer) {
 
       generator.__state_name__ = 'notfoo';
       transfer.execute();
-      expect(generator.called).toBe(true);
-      expect(stateExecute.called).toBe(true);
+      expect(generator.called).to.equal(true);
+      expect(stateExecute.called).to.equal(true);
     });
   });
 });
