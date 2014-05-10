@@ -8,25 +8,19 @@ define('Transfer', [], function() {
   };
 
   Transfer.prototype.execute = function() {
-    var target = null,
+    var targetState = null,
         predResult = this.pred.call(this.context);
 
     if (!predResult) {
       return false;
     }
 
-    // 1. No such state
-    // 2. Has the state but with different context
-    // 3. Has the correct state
-    if (!this.runtime.has(this.generator.__state_name__) ||
-        (this.runtime.state(this.generator.__state_name__).__context_id__ !==
-         this.context.__context_id__)
-        ) {
-      target = this.generator();
+    if (!this.runtime.has(this.generator.stateName)) {
+      targetState = this.generator();
     } else {
-      target = this.runtime.state(this.generator.__state_name__);
+      targetState = this.runtime.state(this.generator.stateName);
     }
-    target.execute();
+    targetState.execute();
     return true;
   };
 

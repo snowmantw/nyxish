@@ -7,17 +7,16 @@ define(['sinon', 'Transfer'], function(sinon, Transfer) {
             'has': sinon.stub().returns(true),
             'state': function() {
               return {
-                '__context_id__': 'bar',
                 'execute': stateExecute
               };
             }
           },
           generator = function() {},
           pred = sinon.stub().returns(true),
-          transfer = new Transfer(runtime, {'__context_id__': 'bar'},
+          transfer = new Transfer(runtime, {},
             generator, pred);
 
-      generator.__state_name__ = 'foo';
+      generator.stateName = 'foo';
       transfer.execute();
       expect(stateExecute.called).to.equal(true);
     });
@@ -31,10 +30,10 @@ define(['sinon', 'Transfer'], function(sinon, Transfer) {
             { 'execute': stateExecute }
           ),
           pred = sinon.stub().returns(true),
-          transfer = new Transfer(runtime, {'__context_id__': 'bar'},
+          transfer = new Transfer(runtime, {},
             generator, pred);
 
-      generator.__state_name__ = 'notfoo';
+      generator.stateName = 'notfoo';
       transfer.execute();
       expect(generator.called).to.equal(true);
       expect(stateExecute.called).to.equal(true);
