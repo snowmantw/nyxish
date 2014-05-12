@@ -79,5 +79,11 @@ function(Module, DefaultStates) {
     }
   };
 
+  Runtime.prototype.infect = function() {
+    window['monitor'] = this.monitor.bind(this);
+    window['transfer'] = this.transfer.bind(this);
+    window['def'] = this.def.bind(this);
+  };
+
   return Runtime;
 });
