@@ -52,34 +52,7 @@ define(['sinon', 'Squire'], function(sinon, Squire) {
         stubGeneratorName.restore();
     }));
 
-    it('should generate and register a state when we call the generator',
-      injector.run(['Module'], function(Module) {
-        var runtime = {},
-            context = {},
-            content = function() {},
-            generator = null,
-            stubRequestRegisterState = sinon.stub(Module.prototype,
-              'requestRegisterState',
-              function(state) {
-                expect(state.configs.name).to.equal('state-foo');
-              }),
-            stubStateName = sinon.stub(Module.prototype, 'stateName')
-                            .returns('state-foo'),
-            stubGeneratorName = sinon.stub(Module.prototype, 'generatorName')
-                            .returns('generator-foo'),
-            module = new Module(runtime, context, 'module-foo');
-
-        generator = module.define(content);
-        generator();
-
-        expect(module.states['state-foo']).not.equal(undefined);
-
-        stubRequestRegisterState.restore();
-        stubStateName.restore();
-        stubGeneratorName.restore();
-    }));
-
-    it('should do inner module transferring',
+    it('should do inner-module transferring',
       injector.run(['Module', 'Transfer'], function(Module, Transfer) {
         var runtime = {},
             context = {},
@@ -93,7 +66,7 @@ define(['sinon', 'Squire'], function(sinon, Squire) {
         stubCalled.Transfer.execute.called = false;
     }));
 
-    it('should do intra module transferring when it\'s necessary',
+    it('should do inter-module transferring when it\'s necessary',
       injector.run(['Module'], function(Module) {
         var runtime = {},
             context = {},

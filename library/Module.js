@@ -84,14 +84,6 @@ function(State, Monitor, Transfer, TransferInterfaces) {
     return this.configs.name + '-generator-' + Date.now();
   };
 
-  Module.prototype.requestRegisterState = function(state) {
-    this.runtime.request('state', 'register', {
-      'name': state.configs.name,
-      'module': this,
-      'state': state
-    });
-  };
-
   Module.prototype.requestModuleTransfer = function(to, cb) {
     this.runtime.request('module', 'transfer', {
       'from': this.configs.name,

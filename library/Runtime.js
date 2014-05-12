@@ -1,5 +1,5 @@
-define('Runtime', ['State', 'Transfer', 'TransferInterfaces', 'modules/DefaultStates'],
-function(State, Transfer, Monitor) {
+define('Runtime', ['Module', 'modules/DefaultStates'],
+function(Module, DefaultStates) {
   'use strict';
   var Runtime = function() {
     if (window.__runtime__) {
@@ -30,60 +30,53 @@ function(State, Transfer, Monitor) {
     });
   };
 
-  Runtime.registerModule = function(mod) {
+  Runtime.prototype.registerModule = function(mod) {
     this.states.module.modules[mod.name] = mod;
   };
 
-  Runtime.unregisterModule = function(mod) {
+  Runtime.prototype.unregisterModule = function(mod) {
     delete this.states.module.modules[mod.name];
   };
 
   Runtime.prototype.transfer = function(generator, pred) {
+    var module = this.states.module.active;
     if ('function' !== typeof generator) {
-      return this.transferInterfaces();
+      return module.transferInterfaces();
     }
+    module.transfer(generator, pred);
+  };
 
-    var transfer = new Transfer(this,
-          this.states.module.active.context,
-          generator,
-          pred),
-        context = this.states.module.active.context,
-        monitors = this.states.monitors[context.__context_id__];
+  Runtime.prototype.monitor = function() {
+    this.states.module.active.monitor(entry, configs);
+  };
 
-    // Must call this before state transferring.
-    Object.keys(monitors).forEach((entry) => {
-      monitors[entry].transfer(context);
+  Runtime.prototype.responseModuleTransfer = function(targetName) {
+    var module = this.states.module.active,
+        target = this.states.module.modules[targetName];
+    if (!target) {
+      throw new Error("Transfer to a non-existing module.");
+    }
+    // We would keep the same monitors in modules. The active module
+    // should own the newest monitors can can overwrite the olds.
+    //
+    // If module has other cross-module information like this, we would
+    // do the transferring here, too.
+    Object.keys(module.monitors).forEach((entry) => {
+      target.module.monitors[entry] = module.monitors[entry];
     });
-
-    transfer.execute();
+    return target;
   };
 
-  Runtime.prototype.transferInterfaces = function() {
-    return new TransferInterfaces(this, this.states.module.active.context);
-  };
-
-  Runtime.prototype.monitor = function(entry, configs) {
-    var monitor = new Monitor(this,
-        this.states.module.active.context,
-        entry,
-        configs);
-    this.registerMonitor(monitor);
-  };
-
-  Runtime.prototype.registerMonitor = function(monitor) {
-    if (!this.states.monitors[monitor.context.__context_id__]) {
-      this.states.monitors[monitor.context.__context_id__] = {};
+  Runtime.prototype.request = function(category, method, details) {
+    if('module' === category) {
+      switch(method) {
+        case 'transfer':
+          var {from, to, callback} = details,
+              result = this.responseModuleTransfer(to);
+          callback(result);
+        break;
+      }
     }
-    var registry = this.states.monitors[monitor.context.__context_id__];
-    registry[monitor.entry] = monitor;
-  };
-
-  Runtime.prototype.unregisterMonitor = function(monitor) {
-    if (!this.states.monitors[monitor.context.__context_id__]) {
-      return;
-    }
-    var registry = this.states.monitors[monitor.context.__context_id__];
-    delete registry[monitor.entry];
   };
 
   return Runtime;
