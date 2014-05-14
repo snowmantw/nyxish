@@ -3,7 +3,10 @@ define(['sinon', 'Squire'], function(sinon, Squire) {
   describe('Runtime >', function() {
     var injector = new Squire();
     beforeEach(function() {
-      var mockModule = function() {};
+      var mockModule = function(runtime, context) {
+        this.runtime = runtime;
+        this.context = context;
+      };
       injector.mock('Module', mockModule);
 
       var mockDefaultStates = function() {};
@@ -27,6 +30,27 @@ define(['sinon', 'Squire'], function(sinon, Squire) {
         runtime.transfer(stubGenerator);
         expect(runtime.states.module.active.transfer.called).to.equal(true);
         delete window.__runtime__;
+      }));
+
+    it('should do monitor transferring while response to module transferring',
+      injector.run(['Runtime'], function(Runtime) {
+        var runtime = new Runtime();
+        runtime.states.module.modules.foo = {
+          monitors: []
+        };
+        runtime.states.module.active = {
+          monitors: [1,2,3] // We only need to test the re-assignation.
+        };
+        runtime.responseModuleTransfer('foo');
+        expect(runtime.states.module.modules.foo.monitors)
+          .to.have.members([1,2,3]);
+      }));
+
+    it('should define a module while the function got called',
+      injector.run(['Runtime'], function(Runtime) {
+        var runtime = new Runtime();
+        runtime.module({'foo': 1});
+        expect(runtime.states.module.defining.context.foo).to.equal(1);
       }));
   });
 });

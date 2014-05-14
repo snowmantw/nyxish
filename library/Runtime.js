@@ -38,23 +38,11 @@ function(Module, DefaultStates) {
     delete this.states.module.modules[mod.name];
   };
 
-  Runtime.prototype.transfer = function(generator, pred) {
-    var module = this.states.module.active;
-    if ('function' !== typeof generator) {
-      return module.transferInterfaces();
-    }
-    module.transfer(generator, pred);
-  };
-
-  Runtime.prototype.monitor = function() {
-    this.states.module.active.monitor(entry, configs);
-  };
-
   Runtime.prototype.responseModuleTransfer = function(targetName) {
     var module = this.states.module.active,
         target = this.states.module.modules[targetName];
     if (!target) {
-      throw new Error("Transfer to a non-existing module.");
+      throw new Error("Transfer to a non-existing module: " + targetName);
     }
     // We would keep the same monitors in modules. The active module
     // should own the newest monitors can can overwrite the olds.
@@ -62,7 +50,7 @@ function(Module, DefaultStates) {
     // If module has other cross-module information like this, we would
     // do the transferring here, too.
     Object.keys(module.monitors).forEach((entry) => {
-      target.module.monitors[entry] = module.monitors[entry];
+      target.monitors[entry] = module.monitors[entry];
     });
     return target;
   };
@@ -79,10 +67,42 @@ function(Module, DefaultStates) {
     }
   };
 
+  /**
+   * Will return TransferInterfaces if the first argument is not an
+   * function (state generator).
+   */
+  Runtime.prototype.transfer = function(generator, pred) {
+    var module = this.states.module.active;
+    if ('function' !== typeof generator) {
+      return module.transferInterfaces();
+    }
+    module.transfer(generator, pred);
+  };
+
+  Runtime.prototype.moduleName = function() {
+    return 'module-' + Date.now();
+  };
+
+  Runtime.prototype.monitor = function() {
+    this.states.module.active.monitor(entry, configs);
+  };
+
+  Runtime.prototype.def = function(content) {
+    this.states.module.defining.define(content);
+  };
+
+  Runtime.prototype.module = function(context) {
+    var name = this.moduleName(),
+        module = new Module(this, context, name);
+    this.registerModule(module);
+    this.states.module.defining = module;
+  };
+
   Runtime.prototype.infect = function() {
-    window['monitor'] = this.monitor.bind(this);
-    window['transfer'] = this.transfer.bind(this);
-    window['def'] = this.def.bind(this);
+    window.monitor = this.monitor.bind(this);
+    window.transfer = this.transfer.bind(this);
+    window.def = this.def.bind(this);
+    window.mod = this.module.bind(this);
   };
 
   return Runtime;
