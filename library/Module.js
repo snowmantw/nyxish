@@ -33,7 +33,7 @@ function(State, Monitor, Transfer, TransferInterfaces) {
         method = () => {
           var state = new State(this.runtime, this.context, stateName, content);
           this.states[stateName] = state;
-          this.requestRegisterState(state);
+          return state;
         };
     method.methodName = this.generatorName();
     method.stateName = stateName;

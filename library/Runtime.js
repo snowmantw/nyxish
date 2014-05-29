@@ -1,5 +1,5 @@
-define('Runtime', ['Module', 'modules/DefaultStates'],
-function(Module, DefaultStates) {
+define('Runtime', ['Configs', 'Module'],
+function(Configs, Module) {
   'use strict';
   var Runtime = function() {
     if (window.__runtime__) {
@@ -16,18 +16,23 @@ function(Module, DefaultStates) {
     this.states.module = {
       'active': null,
       'defining': null,
-      'modules': {}
+      'modules': {},
+      'infected': false
     };
+    this.configs = new Configs();
   };
 
-  Runtime.prototype.start = function() {
-    this.registerModule(new DefaultStates());
+  Runtime.prototype.start = function(bootstrapModule) {
+    this.registerModule(bootstrapModule);
+    this.states.module.active = bootstrapModule;
+    return this;
   };
 
   Runtime.prototype.stop = function() {
     this.states.module.modules.forEach((mod) => {
       this.unregisterModule(mod);
     });
+    return this;
   };
 
   Runtime.prototype.registerModule = function(mod) {
@@ -79,6 +84,18 @@ function(Module, DefaultStates) {
     module.transfer(generator, pred);
   };
 
+  /**
+   * Has state or not. Only concerns the inner-module query according
+   * to the current active module.
+   */
+  Runtime.prototype.has = function(name) {
+    return !!this.states.module.active.states[name];
+  };
+
+  Runtime.prototype.state = function(name) {
+    return this.states.module.active.states[name];
+  };
+
   Runtime.prototype.moduleName = function() {
     return 'module-' + Date.now();
   };
@@ -88,21 +105,52 @@ function(Module, DefaultStates) {
   };
 
   Runtime.prototype.def = function(content) {
-    this.states.module.defining.define(content);
+    return this.states.module.defining.define(content);
   };
 
   Runtime.prototype.module = function(context) {
+    context = context || self;
+    context.configs = this.configs;
     var name = this.moduleName(),
         module = new Module(this, context, name);
     this.registerModule(module);
     this.states.module.defining = module;
+    return module;
   };
 
   Runtime.prototype.infect = function() {
+    if (this.states.infected) {
+      return this;
+    }
     window.monitor = this.monitor.bind(this);
     window.transfer = this.transfer.bind(this);
     window.def = this.def.bind(this);
     window.mod = this.module.bind(this);
+    window.instance = () => this.states.module.active;
+    this.states.infected = true;
+    return this;
+  };
+
+  /**
+   * Bootstrap the program.
+   */
+  Runtime.prototype.bootstrap = function() {
+    this.transfer(this.states.module.active.__init__,
+      () => {return true;});
+  };
+
+  /**
+   * The program has been shutdown.
+   * This should be called within the __fin__ state.
+   */
+  Runtime.prototype.shutdown = function(context) {
+    this.debug('(II)',
+      'The program has been shut down with the final context ',
+      context);
+  };
+
+  Runtime.prototype.debug = function() {
+    console.log.apply(console, arguments);
   };
 
   return Runtime;

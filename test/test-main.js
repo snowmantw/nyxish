@@ -1,5 +1,5 @@
 var allTestFiles = [];
-var TEST_REGEXP = /(spec|test)\.js$/i;
+var TEST_REGEXP = /(demo|spec|test)\.js$/i;
 
 var pathToModule = function(path) {
   // from baseUrl, like '/base/library', to '/base/test'
