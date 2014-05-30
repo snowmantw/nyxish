@@ -6,6 +6,7 @@ define(['sinon', 'Squire'], function(sinon, Squire) {
       var mockModule = function(runtime, context) {
         this.runtime = runtime;
         this.context = context;
+        this.transfer = function() {};
       };
       injector.mock('Module', mockModule);
 
@@ -18,15 +19,15 @@ define(['sinon', 'Squire'], function(sinon, Squire) {
     });
 
     it('should call Module#transfer when we invoke the transfer function',
-      injector.run(['Runtime'], function(Runtime) {
-        var stubGenerator = sinon.stub(),
+      injector.run(['Runtime', 'Module'],
+      function(Runtime, Module) {
+        var module = new Module(),
+            stubGenerator = sinon.stub(),
+            stubTransfer = sinon.stub(module, 'transfer'),
             pred = sinon.stub().returns(true),
             runtime = new Runtime();
 
-        runtime.states.module.active = {
-          transfer: sinon.stub()
-        };
-        runtime.start();
+        runtime.start(module);
         runtime.transfer(stubGenerator);
         expect(runtime.states.module.active.transfer.called).to.equal(true);
         delete window.__runtime__;

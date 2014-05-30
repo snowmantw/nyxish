@@ -14,6 +14,10 @@ function(State, Monitor, Transfer, TransferInterfaces) {
     this.states = {};
     this.monitors = {};
     this.methods = {};
+    this.counter = {
+      'state': 0,
+      'generator': 0
+    };
     this.configs = {
       'name': undefined
     };
@@ -77,11 +81,13 @@ function(State, Monitor, Transfer, TransferInterfaces) {
   };
 
   Module.prototype.stateName = function() {
-    return this.configs.name + '-state-' + Date.now();
+    this.counter.state += 1;
+    return this.configs.name + '-state-' + this.counter.state;
   };
 
   Module.prototype.generatorName = function() {
-    return this.configs.name + '-generator-' + Date.now();
+    this.counter.generator += 1;
+    return this.configs.name + '-generator-' + this.counter.generator;
   };
 
   Module.prototype.requestModuleTransfer = function(to, cb) {

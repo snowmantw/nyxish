@@ -1,8 +1,10 @@
-require(['Runtime'], function(Runtime) {
+define(['Runtime'], function(Runtime) {
   var runtime = new Runtime();
   runtime.infect();
 
-  var Foo = mod({});
+  var Foo = mod({
+    'name': 'Foo'
+  });
 
   Foo.__init__ = def(function() {
     var mod = instance();
@@ -21,7 +23,7 @@ require(['Runtime'], function(Runtime) {
   });
 
   Foo.start = def(function() {
-    var instance = instance();
+    var mod = instance();
     this.started = true;
     transfer(instance.stop, function() {
       return true;
@@ -32,5 +34,10 @@ require(['Runtime'], function(Runtime) {
     expect(this.started).to.equal(true);
   });
 
-  runtime.start(Foo).bootstrap();
+  runtime.start(Foo);
+
+  expect(Object.keys(runtime.states.module.defining.states).length)
+    .to.equal(3);
+
+  runtime.bootstrap();
 });

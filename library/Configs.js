@@ -7,7 +7,8 @@ function() {
   };
 
   Configs.prototype.setupTimeout = function() {
-    this.setupCategory('timeout');
+    this.setupCategory('timeout',
+      ['transfer', 'program']);
 
     /**
      * Timeout before each transfer get executed.
@@ -21,7 +22,8 @@ function() {
   };
 
   Configs.prototype.setupError = function() {
-    this.setupCategory('error');
+    this.setupCategory('error',
+      ['programTimeout']);
 
     /**
      * So that the an error would be thrown if the program
@@ -30,10 +32,9 @@ function() {
     this.error[':programTimeout'] = true;
   };
 
-  Configs.prototype.setupCategory = function(category) {
+  Configs.prototype.setupCategory = function(category, entries) {
     this[category] = {};
-    var subject = this[category],
-        entries = ['transfer', 'program'];
+    var subject = this[category];
     entries.forEach((name) => {
       // [':foo'] == default value, set by Configs.
       // ['_foo'] == write-once value, set by user.

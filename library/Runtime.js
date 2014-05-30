@@ -12,12 +12,14 @@ function(Configs, Module) {
   };
 
   Runtime.prototype.setup = function() {
-    this.states = {};
+    this.states = {
+      'infected': false
+    };
     this.states.module = {
       'active': null,
       'defining': null,
       'modules': {},
-      'infected': false
+      'counter': 0
     };
     this.configs = new Configs();
   };
@@ -72,6 +74,21 @@ function(Configs, Module) {
     }
   };
 
+  Runtime.prototype.notify = function(category, method, details) {
+    if ('state' === category) {
+      switch(method) {
+        case 'done':
+          this.onStateDone(details);
+          break;
+      }
+    }
+  };
+
+  Runtime.prototype.onStateDone = function(details) {
+    var {name} = details;
+    // TODO
+  };
+
   /**
    * Will return TransferInterfaces if the first argument is not an
    * function (state generator).
@@ -97,7 +114,8 @@ function(Configs, Module) {
   };
 
   Runtime.prototype.moduleName = function() {
-    return 'module-' + Date.now();
+    this.states.module.counter += 1;
+    return 'module-' + this.states.module.counter;
   };
 
   Runtime.prototype.monitor = function() {
@@ -105,7 +123,8 @@ function(Configs, Module) {
   };
 
   Runtime.prototype.def = function(content) {
-    return this.states.module.defining.define(content);
+    var generator = this.states.module.defining.define(content);
+    return generator();
   };
 
   Runtime.prototype.module = function(context) {

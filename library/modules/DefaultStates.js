@@ -5,8 +5,8 @@ function(Runtime) {
 
   DefaultStates = mod({});
   DefaultStates.__init__ = def(function() {
-    var instance = instance();
-    transfer(instance.__fin__, function() {
+    var mod = instance();
+    transfer(mod.__fin__, function() {
       return true;
     });
   });
