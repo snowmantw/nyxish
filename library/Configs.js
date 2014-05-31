@@ -8,12 +8,18 @@ function() {
 
   Configs.prototype.setupTimeout = function() {
     this.setupCategory('timeout',
-      ['transfer', 'program']);
+      ['transfer', 'program', 'state']);
 
     /**
      * Timeout before each transfer get executed.
+     * This can prevent asynchronous predicitions to get timeout.
      */
     this.timeout[':transfer'] = 0;
+
+    /**
+     * Timeout before each state get transfered.
+     */
+    this.timeout[':state'] = 0;
 
     /**
      * Timeout before the program get ended.
@@ -23,13 +29,25 @@ function() {
 
   Configs.prototype.setupError = function() {
     this.setupCategory('error',
-      ['programTimeout']);
+      ['programTimeout', 'stateTimeout', 'transferTimeout']);
 
     /**
      * So that the an error would be thrown if the program
      * timeout, rather than transfer to the __fin__ state.
      */
     this.error[':programTimeout'] = true;
+
+    /**
+     * So that the an error would be thrown if it stays at any
+     * state too long.
+     */
+    this.error[':stateTimeout'] = true;
+
+    /**
+     * So that the an error would be thrown if it stays at any
+     * transfer prediction too long.
+     */
+    this.error[':transferTimeout'] = true;
   };
 
   Configs.prototype.setupCategory = function(category, entries) {

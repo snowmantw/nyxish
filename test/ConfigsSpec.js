@@ -9,6 +9,7 @@ define(['sinon', 'Squire'], function(sinon, Squire) {
     it('should define all categories with default values: timeout',
       injector.run(['Configs'], function(Configs) {
         var configs = new Configs();
+        expect(configs.timeout.state).to.equal(0);
         expect(configs.timeout.transfer).to.equal(0);
         expect(configs.timeout.program).to.equal(0);
       }));
@@ -17,6 +18,8 @@ define(['sinon', 'Squire'], function(sinon, Squire) {
     it('should define all categories with default values: error',
       injector.run(['Configs'], function(Configs) {
         var configs = new Configs();
+        expect(configs.error.stateTimeout).to.equal(true);
+        expect(configs.error.transferTimeout).to.equal(true);
         expect(configs.error.programTimeout).to.equal(true);
       }));
 
