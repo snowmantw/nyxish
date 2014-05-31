@@ -75,7 +75,8 @@ define(['sinon', 'Squire'], function(sinon, Squire) {
             stubTargetModule = {
               transfer: function(gen, pred) {
                 expect(gen.generatorName).to.equal('generator-foo');
-              }
+              },
+              contextMigrate: function() {}
             },
             stubRequestModuletransfer =
             sinon.stub(Module.prototype, 'requestModuleTransfer',
@@ -83,11 +84,37 @@ define(['sinon', 'Squire'], function(sinon, Squire) {
               cb(stubTargetModule);
             });
 
-          generator.generatorName = 'generator-foo';
-          generator.moduleName = 'module-not-foo';
-          module.transfer(generator, function() {});
+        generator.generatorName = 'generator-foo';
+        generator.moduleName = 'module-not-foo';
+        module.transfer(generator, function() {});
 
-          stubRequestModuletransfer.restore();
+        stubRequestModuletransfer.restore();
       }));
+
+    it('should migrate the context while do inter-module transferring',
+      injector.run(['Module'], function(Module) {
+        var runtime = {},
+            contextFrom = { 'migrated': true },
+            contextTo = { 'migrated': false, 'someDefaultProperty': 0 },
+            generator = function() {},
+            moduleFrom = new Module(runtime, contextFrom, 'module-from'),
+            moduleTo = new Module(runtime, contextTo, 'module-to'),
+            stubRequestModuletransfer = sinon.stub(moduleFrom,
+              'requestModuleTransfer',
+              function(targetName, cb) {
+                cb(moduleTo);
+              });
+
+        generator.generatorName = 'generator-from';
+        generator.moduleName = 'module-to';
+        moduleFrom.transfer(generator);
+        expect(stubRequestModuletransfer.called).to.equal(true,
+          'the requestModuleTransfer method has NOT been called');
+        expect(moduleTo.context.migrated).to.equal(true,
+          'the migrated context don\'t have the correct property');
+        expect(moduleTo.context.someDefaultProperty).to.equal(0,
+          'the migrated context don\'t have the default properties');
+        stubRequestModuletransfer.restore();
+    }));
   });
 });

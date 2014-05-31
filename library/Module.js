@@ -62,6 +62,9 @@ function(State, Monitor, Transfer, TransferInterfaces) {
     if (generator.moduleName !== this.configs.name) {
       this.requestModuleTransfer(generator.moduleName,
       (targetModule) => {
+        // When we transfer to another module, do the context
+        // migration.
+        targetModule.contextMigrate(this.context);
         targetModule.transfer(generator, pred);
       });
     } else {
@@ -73,6 +76,33 @@ function(State, Monitor, Transfer, TransferInterfaces) {
   Module.prototype.transferInterfaces = function() {
     var transferInterfaces = new TransferInterfaces(this.runtime, this.context);
     return transferInterfaces;
+  };
+
+  /**
+   * The new context would overwrite all existing properties of the default
+   * context in this module. If it own more properties than the default one,
+   * the rest part would not be a part of the migrated context.
+   *
+   * Note that we don't copy the contexts, but just migrate them.
+   * So the properties from the migrated context would affect the original
+   * one.
+   */
+  Module.prototype.contextMigrate = function(newContext) {
+    this.context =
+    Object.keys(this.context).reduce((migrated, name) => {
+      if (!newContext[name]) {
+        console.log('(!!)',
+          'No such property in the new context ',
+          name,
+          newContext,
+          this.context);
+        migrated[name] = this.context[name];
+      } else {
+        migrated[name] = newContext[name];
+      }
+
+      return migrated;
+    }, {});
   };
 
   Module.prototype.monitor = function(entry, configs) {

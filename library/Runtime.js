@@ -38,11 +38,11 @@ function(Configs, Module) {
   };
 
   Runtime.prototype.registerModule = function(mod) {
-    this.states.module.modules[mod.name] = mod;
+    this.states.module.modules[mod.configs.name] = mod;
   };
 
   Runtime.prototype.unregisterModule = function(mod) {
-    delete this.states.module.modules[mod.name];
+    delete this.states.module.modules[mod.configs.name];
   };
 
   Runtime.prototype.responseModuleTransfer = function(targetName) {
@@ -163,13 +163,9 @@ function(Configs, Module) {
    * This should be called within the __fin__ state.
    */
   Runtime.prototype.shutdown = function(context) {
-    this.debug('(II)',
+    console.log('(II)',
       'The program has been shut down with the final context ',
       context);
-  };
-
-  Runtime.prototype.debug = function() {
-    console.log.apply(console, arguments);
   };
 
   return Runtime;

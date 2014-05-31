@@ -3,9 +3,11 @@ define(['sinon', 'Squire'], function(sinon, Squire) {
   describe('Runtime >', function() {
     var injector = new Squire();
     beforeEach(function() {
-      var mockModule = function(runtime, context) {
+      var mockModule = function(runtime, context, name) {
         this.runtime = runtime;
         this.context = context;
+        this.configs = { 'name': name };
+        this.monitors = {};
         this.transfer = function() {};
       };
       injector.mock('Module', mockModule);
