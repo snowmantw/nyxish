@@ -2,6 +2,16 @@ define(['Runtime'], function(Runtime) {
   var runtime = new Runtime();
   runtime.infect();
 
+  /**
+   * Two types of modules: one is library-orient module, which provide
+   * only common functions can be called, no matter whether they're
+   * stateless or stateful. The other one is for main program, which
+   * contains only states and trasferrings, which should never been
+   * invoked as re-usable components.
+   *
+   * Maybe some module can mix these two kinds of modules, but I don't
+   * think it's a good idea.
+   */
   var Foo = mod({
     'name': 'Foo'
   });
