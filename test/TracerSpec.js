@@ -3,16 +3,16 @@ define(['sinon', 'Squire'], function(sinon, Squire) {
   describe('Tracer >', function() {
     var injector = new Squire();
     beforeEach(function() {
-      var mockStateTracer = function(name) {
+      var mockStateTracer = function(name, timeout, error) {
             this.configs = { 'name': name };
             this.states = {};
-            this.start = function(timestamp, timeout, error) {
+            this.states.timeout = timeout;
+            this.states.error = error;
+            this.start = function(timestamp) {
               this.states.timestamp = {
                   'start': timestamp,
                   'stop': null
                 };
-              this.states.timeout = timeout;
-              this.states.error = error;
               return this;
             };
             this.stop = function(timestamp) {
@@ -46,6 +46,7 @@ define(['sinon', 'Squire'], function(sinon, Squire) {
             programTimeout: true
           }
         });
+        tracer.notify('state', 'define', { 'name': 'foo-state' } );
         tracer.notify('state', 'start', { 'name': 'foo-state' } );
         expect(tracer.stateTracers['foo-state']).to.not.equal(undefined,
           'the tracer contains no corresponding state tracer');
@@ -69,6 +70,8 @@ define(['sinon', 'Squire'], function(sinon, Squire) {
             programTimeout: true
           }
         });
+        tracer.notify('state', 'define', { 'name': 'foo-state' } );
+        tracer.notify('state', 'define', { 'name': 'bar-state' } );
         tracer.notify('state', 'start', { 'name': 'foo-state' } );
         tracer.notify('state', 'start', { 'name': 'bar-state' } );
         tracer.shutdown();

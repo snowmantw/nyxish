@@ -32,8 +32,8 @@ function(State, Monitor, Transfer, TransferInterfaces) {
    *
    * Some of these attributes are for cross-module transferring.
    */
-  Module.prototype.define = function(content) {
-    var stateName = this.stateName(),
+  Module.prototype.define = function(content, name) {
+    var stateName = name || this.stateName(),
         method = () => {
           var state = new State(this.runtime, this.context, stateName, content);
           this.states[stateName] = state;

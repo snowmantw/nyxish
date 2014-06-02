@@ -17,14 +17,18 @@ function() {
     };
   };
 
-  BasicTracer.prototype.start = function(timestamp, timeout, error) {
+  BasicTracer.prototype.define = function(name, timeout, error) {
     this.configs.timeout = timeout;
     this.configs.timeoutError = error;
+  };
+
+  BasicTracer.prototype.start = function(timestamp) {
     this.states.startTime = timestamp;
-    if (0 !== timeout) {
-      var handler = error ? this.timeoutError.bind(this) :
+    if (0 !== this.configs.timeout) {
+      var handler = this.configs.timeoutError ?
+                    this.timeoutError.bind(this) :
                     this.timeoutWarning.bind(this);
-      this.states.timer = setTimeout(handler, timeout);
+      this.states.timer = setTimeout(handler, this.configs.timeout);
     }
   };
 

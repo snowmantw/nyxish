@@ -14,19 +14,25 @@ function(StateTracer, TransferTracer, ProgramTracer) {
         if ('start' === method) {
           var { name } = details;
           this.onStateStart(name);
-        } else if ('stop') {
+        } else if ('stop' === method) {
           var { name } = details;
           this.onStateStop(name);
+        } else if ('define' === method) {
+          var {name, timeout, error} = details;
+          this.onStateDefine(name, timeout, error);
         }
         break;
     }
   };
 
+  Tracer.prototype.onStateDefine = function(name, timeout, error) {
+    timeout = timeout || this.configs.timeout.state;
+    error = error || this.configs.error.stateTimeout;
+    this.stateTracers[name] = new StateTracer(name, timeout, error);
+  };
+
   Tracer.prototype.onStateStart = function(name) {
-    this.stateTracers[name] = (new StateTracer(name))
-      .start(Date.now(),
-        this.configs.timeout.state,
-        this.configs.error.stateTimeout);
+    this.stateTracers[name].start(Date.now());
   };
 
   Tracer.prototype.onStateStop = function(name) {

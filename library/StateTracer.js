@@ -5,17 +5,13 @@ function(BasicTracer) {
   /**
    * Inherit the BasicTracer.
    */
-  var StateTracer = function(name) {
+  var StateTracer = function(name, timeout, error) {
     BasicTracer.prototype.setup.call(this);
-    this.setup(name);
+    this.define(name, timeout, error);
+    this.configs.type = 'state';
   };
 
   StateTracer.prototype = Object.create(BasicTracer.prototype);
-
-  StateTracer.prototype.setup = function(name) {
-    this.configs.name = name;
-    this.configs.type = 'state';
-  };
 
   return StateTracer;
 });

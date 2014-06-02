@@ -4,17 +4,13 @@ function(BasicTracer) {
   /**
    * Inhert the BasicTracer.
    */
-  var ProgramTracer = function(name) {
+  var ProgramTracer = function(name, timeout, error) {
     BasicTracer.prototype.setup.call(this);
-    this.setup();
+    this.define(name, timeout, error);
+    this.configs.type = 'program';
   };
 
   ProgramTracer.prototype = Object.create(BasicTracer.prototype);
-
-  ProgramTracer.prototype.setup = function(name) {
-    this.configs.type = 'program';
-    this.configs.name = name;
-  };
 
   return ProgramTracer;
 });

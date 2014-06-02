@@ -122,8 +122,10 @@ function(Configs, Module) {
     this.states.module.active.monitor(entry, configs);
   };
 
-  Runtime.prototype.def = function(content) {
-    var generator = this.states.module.defining.define(content);
+  Runtime.prototype.def = function(content, tracerConfigs) {
+    tracerConfigs = tracerConfigs || {};
+    var generator =
+      this.states.module.defining.define(content, tracerConfigs.name);
     return generator();
   };
 
